@@ -1,0 +1,13 @@
+packages:
+  - "slides/*"
+  - "packages/*"
+
+catalog:
+  react-scan: 0.5.7
+
+catalogMode: strict
+
+catalogs:
+  pdf:
+    takumi-pdf: 0.20.0
+
