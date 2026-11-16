@@ -1,0 +1,14 @@
+name: presentations
+version: 1.0.0
+description: APM project for presentations
+author: koralle
+# Which agent platforms to deploy to.
+# Resolution order: --target flag > this field > auto-detect from filesystem.
+# Accepted values: agent-skills, antigravity, claude, codex, copilot, cursor, gemini, grok-bot, grok-build, hermes, kiro, opencode, vscode, windsurf
+targets:
+- agent-skills
+dependencies:
+  apm: []
+  mcp: []
+includes: auto
+scripts: {}
