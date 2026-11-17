@@ -1,0 +1,33 @@
+---
+# 版の更新 PR を出す。pnpm 12 は pnpm-lock.yaml を 2 つの YAML 文書で書くため、
+# 現状 GitHub の依存グラフがその中身を読めず、Dependabot alerts / security updates は
+# 出ない（upstream の制限。解消したらこのコメントを消す）。
+version: 2
+updates:
+  # pnpm ワークスペース。catalog の版（pnpm-workspace.yaml の catalogs）も
+  # ここで上がる（Dependabot は pnpm catalog を解決できる）。
+  # cooldown は pnpm 側の minimumReleaseAge（既定 1440 分 = 1 日）より長くとる。
+  # PR の lockfile が CI の検証（新しい版を拒む）で落ちないようにするため。
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    # minor と patch は 1 本にまとめる。major は個別のまま（戻しやすさを優先）。
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  # ワークフローは SHA でピンしてあるので、版のコメントごとここで上がる。
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
