@@ -1,21 +1,61 @@
 import { createHighlighterCoreSync } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
-import bash from "shiki/langs/bash.mjs";
+import css from "shiki/langs/css.mjs";
+import go from "shiki/langs/go.mjs";
+import html from "shiki/langs/html.mjs";
+import javascript from "shiki/langs/javascript.mjs";
 import json from "shiki/langs/json.mjs";
+import jsx from "shiki/langs/jsx.mjs";
+import nix from "shiki/langs/nix.mjs";
+import rust from "shiki/langs/rust.mjs";
+import shellscript from "shiki/langs/shellscript.mjs";
+import toml from "shiki/langs/toml.mjs";
 import tsx from "shiki/langs/tsx.mjs";
+import typescript from "shiki/langs/typescript.mjs";
+import yaml from "shiki/langs/yaml.mjs";
 import githubLight from "shiki/themes/github-light.mjs";
 
 import { CODE_FONT_FAMILY, SLIDE_THEME } from "./theme";
 
 /**
- * 使う言語だけを静的に登録する。`createHighlighterCoreSync` は同期で、WASM も
- * 非同期の初期化も要らない（プレビューのブラウザでもそのまま動く）。
- * 言語を増やすときは import を足して `LANGS` に並べる。ファイル全体がバンドルに
- * 入るので、使わないものは入れない。
+ * 着色に使う文法。`shiki/langs/*` を静的に読むと、その文法だけがバンドルに入る。
+ * 使える言語を増やすときは import と `LANGS` に足す。全言語（346）を登録すると
+ * ハイライターの初期化だけで 1.7 秒かかるので、必要なものだけにしている。
  */
-const LANGS = { bash, json, tsx } as const;
+const LANGS = {
+  css,
+  go,
+  html,
+  javascript,
+  jsx,
+  json,
+  nix,
+  rust,
+  shellscript,
+  toml,
+  tsx,
+  typescript,
+  yaml,
+} as const;
 
-type Lang = keyof typeof LANGS;
+/**
+ * `lang` に書ける値。文法の id と、Shiki が文法側で定義している別名
+ * （`javascript` の js/cjs/mjs、`shellscript` の bash など）。別名は文法を
+ * 登録していれば Shiki が解決する。
+ */
+type Lang =
+  | keyof typeof LANGS
+  | "bash"
+  | "cjs"
+  | "cts"
+  | "js"
+  | "mjs"
+  | "mts"
+  | "rs"
+  | "sh"
+  | "shell"
+  | "yml"
+  | "zsh";
 
 /** 白いスライドに合わせた明るいテーマ。背景は `SLIDE_THEME.codeBackground` を使う。 */
 const THEME = "github-light";
@@ -23,8 +63,8 @@ const THEME = "github-light";
 const highlighter = createHighlighterCoreSync({
   themes: [githubLight],
   langs: Object.values(LANGS),
-  // 正規表現エンジンは JS 実装。文法によっては変換できない正規表現を含むので、
-  // その場合は着色だけ諦めて素のテキストに落とす。
+  // 正規表現エンジンは JS 実装（WASM を読まない）。文法によっては変換できない
+  // 正規表現を含むので、その場合は着色だけ諦めて素のテキストに落とす。
   engine: createJavaScriptRegexEngine({ forgiving: true }),
 });
 

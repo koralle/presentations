@@ -61,11 +61,31 @@ await writeFile(out, pdf);
 </Code>
 ```
 
-`lang` を渡すと [Shiki](https://shiki.style/) で着色する（`bash` / `json` / `tsx`）。省略すれば素のテキスト。
+`lang` を渡すと [Shiki](https://shiki.style/) で着色する。省略すれば素のテキスト。使える言語は `code.tsx` の `LANGS` にある 13 文法と、その別名:
+
+| 文法 (id)                      | 別名                            |
+| ------------------------------ | ------------------------------- |
+| `html` / `css`                 |                                 |
+| `javascript`                   | `js` / `cjs` / `mjs`            |
+| `jsx`                          |                                 |
+| `typescript`                   | `ts` / `cts` / `mts`            |
+| `tsx`                          |                                 |
+| `yaml`                         | `yml`                           |
+| `json` / `toml` / `nix` / `go` |                                 |
+| `rust`                         | `rs`                            |
+| `shellscript`                  | `bash` / `sh` / `shell` / `zsh` |
+
+増やすときは `shiki/langs/<id>.mjs` を import して `LANGS` に足す（`lang` の型も `Lang` に足す）。
 
 長い行は折り返す。PDF では枠からはみ出した分が黙って切り捨てられるので、 `white-space: pre` は使わない。
 
-着色は `codeToTokensBase()` のトークンを 1 つずつ `span` のインライン `color` にする。takumi はスタイルシートのクラスを解釈しないので `codeToHtml()` の HTML は使えない。ハイライターは `createHighlighterCoreSync()` + JavaScript 正規表現エンジンで作っており、WASM も非同期の初期化も無い（プレビューのブラウザでも同じコードが動く）。言語を増やすときは `code.tsx` の import と `LANGS` に足す。文法が読めないときは `forgiving: true` で着色だけ諦める。
+着色は `codeToTokensBase()` のトークンを 1 つずつ `span` のインライン `color` にする。takumi はスタイルシートのクラスを解釈しないので `codeToHtml()` の HTML は使えない。
+
+ハイライターは `createHighlighterCoreSync()` + JavaScript 正規表現エンジンで同期的に作る（WASM も非同期の初期化も無い。プレビューのブラウザでも同じコードが動く）。文法を `shiki/langs/*` から静的に読んでいるので、登録した文法だけがバンドルに入る。
+
+言語を全言語（346）にすると初期化だけで 1.7 秒、プレビューのビルドが 9MB / 322 チャンクになる（PDF 生成 0.3 秒 → 2.8 秒）。必要になったら増やす方針で、いまは 13 文法。
+
+文法が読めないときは `forgiving: true` で着色だけ諦める。
 
 ## API
 
