@@ -2,15 +2,27 @@
   "name": "react-tokyo-2026-11-20",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "description": "",
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "pdf": "tsx src/pdf.tsx",
+    "preview": "vite",
+    "typecheck": "tsrs"
   },
   "devDependencies": {
-    "typescript": "^7.0.2"
+    "@koralle/deck": "workspace:*",
+    "@koralle/forge": "workspace:*",
+    "@koralle/preview": "workspace:*",
+    "@types/node": "catalog:typescript",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "tsrs": "catalog:typescript",
+    "tsx": "catalog:tooling",
+    "vite": "catalog:tooling"
   }
 }

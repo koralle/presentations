@@ -1,0 +1,96 @@
+/*
+ * Panda で書けないものだけがここに残る。部品のスタイルは各コンポーネントの
+ * `css()` 側にある。
+ *
+ * 残している理由:
+ * - リセット（kiso.css）: グローバルな要素セレクタ
+ * - `body` / `html`: 同上
+ * - `::view-transition-*`: 擬似要素であって DOM の要素ではない（スライド切り替え
+ *   のクラス名は slide-stage.tsx と対）
+ *
+ * Panda のユーティリティは `@layer utilities` に入る。kiso.css はレイヤーの外に
+ * あるので、そのままだとレイヤー内の指定が負ける（レイヤーの外のほうが強い）。
+ * `layer(reset)` で読んでレイヤーに載せ、ユーティリティに譲る。
+ *
+ * セレクタは全部 `:where()` で包んで詳細度 0 にしてある。
+ */
+@layer reset, base, tokens, recipes, utilities;
+
+@import "kiso.css" layer(reset);
+
+:where(:root) {
+  color-scheme: dark;
+  /* スライド切り替えの長さ。下の View Transition で使う。 */
+  --duration-exit: 150ms;
+  --duration-enter: 210ms;
+  --duration-move: 400ms;
+}
+
+:where(html, body, #root) {
+  block-size: 100%;
+}
+
+/* 色とフォントは外枠のもの。中身（スライド）は `@koralle/deck` の SLIDE_THEME。
+ * 色は panda.config.ts のトークン（Panda が吐く CSS 変数）をそのまま見る。 */
+:where(body) {
+  background: var(--colors-canvas);
+  color: var(--colors-fg);
+  font-family:
+    system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  /* 外枠の文字は画面幅に合わせて伸ばす（スライド側の px とは独立）。 */
+  font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 0.9375rem);
+}
+
+/*
+ * スライドの切り替え（slide-stage.tsx の <ViewTransition>）。進むと左へ、戻ると
+ * 右へ流して、どちらに動いたかを位置で示す。一覧 ⇄ スライドの切り替えには型を
+ * 付けていないので、ここは効かない。
+ */
+@keyframes preview-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes preview-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+}
+
+::view-transition-new(.slide-from-end) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both preview-fade,
+    var(--duration-move) ease-in-out both preview-slide;
+}
+
+::view-transition-old(.slide-to-start) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-exit) ease-in both preview-fade reverse,
+    var(--duration-move) ease-in-out both preview-slide reverse;
+}
+
+::view-transition-new(.slide-from-start) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both preview-fade,
+    var(--duration-move) ease-in-out both preview-slide;
+}
+
+::view-transition-old(.slide-to-end) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-exit) ease-in both preview-fade reverse,
+    var(--duration-move) ease-in-out both preview-slide reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-new(*),
+  ::view-transition-old(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

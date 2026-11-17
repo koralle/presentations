@@ -1,0 +1,26 @@
+{
+  "name": "@koralle/deck",
+  "version": "0.0.0",
+  "private": true,
+  "description": "JSX slides rendered to PDF with takumi-pdf",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./fonts.css": "./src/fonts.css",
+    "./pdf": "./src/pdf.ts"
+  },
+  "scripts": {
+    "typecheck": "tsrs"
+  },
+  "dependencies": {
+    "@takumi-rs/helpers": "catalog:pdf",
+    "react": "catalog:react",
+    "takumi-pdf": "catalog:pdf"
+  },
+  "devDependencies": {
+    "@koralle/forge": "workspace:*",
+    "@types/node": "catalog:typescript",
+    "@types/react": "catalog:react",
+    "tsrs": "catalog:typescript"
+  }
+}

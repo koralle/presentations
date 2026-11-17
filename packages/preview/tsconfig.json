@@ -1,0 +1,13 @@
+{
+  "extends": "@koralle/forge/tsconfig/react.json",
+  "compilerOptions": {
+    "types": ["node", "vite/client"]
+  },
+  "include": [
+    "src",
+    "e2e",
+    "styled-system",
+    "playwright.config.ts",
+    "panda.config.ts"
+  ]
+}

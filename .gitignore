@@ -1,4 +1,12 @@
 node_modules
+dist
+
+# Panda CSS の生成物（`pnpm install` の prepare で作る）
+styled-system/
+
+# Playwright（E2E のレポートと失敗時のスナップショット）
+playwright-report/
+test-results/
 
 # APM の取得キャッシュ（apm install が .agents/skills に配置する）
 apm_modules/

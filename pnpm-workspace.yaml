@@ -7,7 +7,97 @@ catalog:
 
 catalogMode: strict
 
+# 依存パッケージ同梱スキルのエージェントへの受け渡しは APM に一本化する。
+# pnpm 12 の自動リンクは直接依存の 1 階層しか見ないため使わない。
+skills:
+  dirs: []
+
+allowBuilds:
+  # tsx が使う。ビルドスクリプトを許可しないと install が止まる
+  esbuild: true
+  # Panda の Vite プラグインが watch に使う（native binding）
+  "@parcel/watcher": true
+
 catalogs:
+  lint:
+    oxfmt: 0.79.0
+    oxlint: 1.94.0
+    oxlint-tsgolint: 7.0.2007
+    ultracite: 8.2.1
+
   pdf:
+    "@takumi-rs/helpers": 2.20.0
     takumi-pdf: 0.20.0
 
+  react:
+    "@types/react": 19.3.0
+    "@types/react-dom": 19.3.0
+    lucide-react: 1.74.0
+    react: 19.3.1
+    react-aria-components: 1.22.1
+    react-dom: 19.3.1
+
+  css:
+    "@pandacss/dev": 2.5.0
+    "@pandacss/preset-base": 2.5.0
+    "@pandacss/preset-panda": 2.5.0
+    "@pandacss/vite": 2.5.0
+    kiso.css: 1.2.4
+
+  tooling:
+    "@axe-core/playwright": 4.14.0
+    "@playwright/test": 1.65.1
+    "@vitejs/plugin-react": 6.3.0
+    knip: 6.45.1
+    tsx: 4.23.15
+    vite: 8.3.8
+
+  typescript:
+    "@tsconfig/strictest": 2.0.9
+    "@types/node": 26.6.6
+    tsrs: 0.25.0-ts7.1.0-beta
+
+# リリース直後のパッケージは pnpm の minimumReleaseAge の対象から明示的に除外する
+# （CI の `pnpm install --frozen-lockfile` を supply-chain policy で失敗させないため）。
+minimumReleaseAgeExclude:
+  - "@oxfmt/binding-android-arm-eabi@0.79.0"
+  - "@oxfmt/binding-android-arm64@0.79.0"
+  - "@oxfmt/binding-darwin-arm64@0.79.0"
+  - "@oxfmt/binding-darwin-x64@0.79.0"
+  - "@oxfmt/binding-freebsd-x64@0.79.0"
+  - "@oxfmt/binding-linux-arm-gnueabihf@0.79.0"
+  - "@oxfmt/binding-linux-arm-musleabihf@0.79.0"
+  - "@oxfmt/binding-linux-arm64-gnu@0.79.0"
+  - "@oxfmt/binding-linux-arm64-musl@0.79.0"
+  - "@oxfmt/binding-linux-ppc64-gnu@0.79.0"
+  - "@oxfmt/binding-linux-riscv64-gnu@0.79.0"
+  - "@oxfmt/binding-linux-riscv64-musl@0.79.0"
+  - "@oxfmt/binding-linux-s390x-gnu@0.79.0"
+  - "@oxfmt/binding-linux-x64-gnu@0.79.0"
+  - "@oxfmt/binding-linux-x64-musl@0.79.0"
+  - "@oxfmt/binding-openharmony-arm64@0.79.0"
+  - "@oxfmt/binding-win32-arm64-msvc@0.79.0"
+  - "@oxfmt/binding-win32-ia32-msvc@0.79.0"
+  - "@oxfmt/binding-win32-x64-msvc@0.79.0"
+  - "@oxlint/binding-android-arm-eabi@1.94.0"
+  - "@oxlint/binding-android-arm64@1.94.0"
+  - "@oxlint/binding-darwin-arm64@1.94.0"
+  - "@oxlint/binding-darwin-x64@1.94.0"
+  - "@oxlint/binding-freebsd-x64@1.94.0"
+  - "@oxlint/binding-linux-arm-gnueabihf@1.94.0"
+  - "@oxlint/binding-linux-arm-musleabihf@1.94.0"
+  - "@oxlint/binding-linux-arm64-gnu@1.94.0"
+  - "@oxlint/binding-linux-arm64-musl@1.94.0"
+  - "@oxlint/binding-linux-ppc64-gnu@1.94.0"
+  - "@oxlint/binding-linux-riscv64-gnu@1.94.0"
+  - "@oxlint/binding-linux-riscv64-musl@1.94.0"
+  - "@oxlint/binding-linux-s390x-gnu@1.94.0"
+  - "@oxlint/binding-linux-x64-gnu@1.94.0"
+  - "@oxlint/binding-linux-x64-musl@1.94.0"
+  - "@oxlint/binding-openharmony-arm64@1.94.0"
+  - "@oxlint/binding-win32-arm64-msvc@1.94.0"
+  - "@oxlint/binding-win32-ia32-msvc@1.94.0"
+  - "@oxlint/binding-win32-x64-msvc@1.94.0"
+  - oxfmt@0.79.0
+  - oxlint@1.94.0
+  - lucide-react@1.74.0

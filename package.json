@@ -1,12 +1,30 @@
 {
   "name": "@koralle/presentations",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "description": "",
-  "scripts": {},
   "keywords": [],
-  "author": "",
   "license": "UNLICENSED",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "check": "ultracite check --type-aware",
+    "fix": "ultracite fix --type-aware",
+    "knip": "knip",
+    "typecheck": "tsrs && pnpm -r run typecheck",
+    "pdf": "pnpm -r run pdf",
+    "preview": "pnpm -r --parallel run preview",
+    "test:e2e": "pnpm -r run test:e2e"
+  },
+  "devDependencies": {
+    "@koralle/forge": "workspace:*",
+    "knip": "catalog:tooling",
+    "oxfmt": "catalog:lint",
+    "oxlint": "catalog:lint",
+    "oxlint-tsgolint": "catalog:lint",
+    "tsrs": "catalog:typescript",
+    "ultracite": "catalog:lint"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
@@ -14,6 +32,5 @@
       "onFail": "download"
     }
   },
-  "packageManager": "pnpm@12.21.0",
-  "type": "module"
+  "packageManager": "pnpm@12.21.0"
 }
