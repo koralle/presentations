@@ -1,7 +1,4 @@
-export type DeckMeta = {
-  title: string;
-  author?: string;
-};
+import type { DeckMeta } from "@koralle/deck";
 
 export const deck: DeckMeta = {
   title: "",

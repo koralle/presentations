@@ -1,0 +1,40 @@
+{
+  "name": "@koralle/preview",
+  "version": "0.0.0",
+  "private": true,
+  "description": "JSX のデッキを Vite でライブプレビューする",
+  "type": "module",
+  "exports": {
+    ".": "./src/components/deck-viewer.tsx",
+    "./vite": "./src/vite.ts"
+  },
+  "scripts": {
+    "codegen": "panda codegen",
+    "prepare": "panda codegen",
+    "test:e2e": "playwright test",
+    "typecheck": "panda codegen && tsrs"
+  },
+  "dependencies": {
+    "@koralle/deck": "workspace:*",
+    "@vitejs/plugin-react": "catalog:tooling",
+    "kiso.css": "catalog:css",
+    "lucide-react": "catalog:react",
+    "react": "catalog:react",
+    "react-aria-components": "catalog:react",
+    "vite": "catalog:tooling"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "catalog:tooling",
+    "@koralle/forge": "workspace:*",
+    "@pandacss/dev": "catalog:css",
+    "@pandacss/preset-base": "catalog:css",
+    "@pandacss/preset-panda": "catalog:css",
+    "@pandacss/vite": "catalog:css",
+    "@playwright/test": "catalog:tooling",
+    "@types/node": "catalog:typescript",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "react-dom": "catalog:react",
+    "tsrs": "catalog:typescript"
+  }
+}

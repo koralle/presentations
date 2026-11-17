@@ -1,0 +1,41 @@
+/*
+ * スライドの書体。PDF は `pdf.ts` が同じファイルを takumi に登録するので、
+ * プレビューと PDF で同じバイト列になる（改行位置が食い違わない）。
+ * スライドを描く画面はこの CSS を import する。
+ */
+@font-face {
+  font-family: "LINE Seed JP";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../fonts/LINESeedJP-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "LINE Seed JP";
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url("../fonts/LINESeedJP-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "UDEV Gothic";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../fonts/UDEVGothic-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "UDEV Gothic";
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url("../fonts/UDEVGothic-Bold.ttf") format("truetype");
+}
+
+/* コードは UDEV Gothic。PDF は `pdf.ts` が同じ指定を takumi に渡す。 */
+:where(pre, code, kbd, samp) {
+  font-family: "UDEV Gothic", monospace;
+}

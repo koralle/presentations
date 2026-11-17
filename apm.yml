@@ -4,11 +4,30 @@ description: APM project for presentations
 author: koralle
 # Which agent platforms to deploy to.
 # Resolution order: --target flag > this field > auto-detect from filesystem.
-# Accepted values: agent-skills, antigravity, claude, codex, copilot, cursor, gemini, grok-bot, grok-build, hermes, kiro, opencode, vscode, windsurf
+# Accepted values: agent-skills, antigravity, claude, codex, copilot, cursor,
+# gemini, grok-bot, grok-build, hermes, kiro, opencode, vscode, windsurf
 targets:
-- agent-skills
+  - agent-skills
 dependencies:
-  apm: []
+  apm:
+    - GoogleChrome/modern-web-guidance/skills/modern-web-guidance#v1.0.0
+    - ChromeDevTools/chrome-devtools-mcp/skills/a11y-debugging#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    - ChromeDevTools/chrome-devtools-mcp/skills/chrome-devtools#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    - ChromeDevTools/chrome-devtools-mcp/skills/chrome-devtools-cli#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    - ChromeDevTools/chrome-devtools-mcp/skills/cookie-debugging#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    - ChromeDevTools/chrome-devtools-mcp/skills/debug-optimize-lcp#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    - ChromeDevTools/chrome-devtools-mcp/skills/inspect-in-devtools#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    - ChromeDevTools/chrome-devtools-mcp/skills/memory-leak-debugging#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    - ChromeDevTools/chrome-devtools-mcp/skills/troubleshooting#8ba2ac945ebaf1adb92208c29f3a30e73a920956
+    # skill は v5.5.5 にはまだ無い（main のみ）。v6 以降のリリースが出たら ref をタグに戻す。
+    - haydenbleasel/ultracite/skills/ultracite#f9c034652c654339d0fb038deeea144d4db91a91
+    - git: vercel-labs/agent-skills
+      ref: 1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
+      skills:
+        - composition-patterns
+        - react-best-practices
+        - react-view-transitions
+        - web-design-guidelines
   mcp: []
 includes: auto
 scripts: {}

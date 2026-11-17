@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "chrome-devtools-mcp@1.13.0",
+        "--no-usage-statistics",
+        "--allowed-url-pattern=http://localhost:*/*",
+        "--allowed-url-pattern=http://127.0.0.1:*/*",
+        "--allowed-url-pattern=https://*.localhost/*",
+        "--isolated",
+        "--file-navigations=false",
+        "--no-performance-crux",
+        "--redact-network-headers",
+        "--screenshot-format=webp",
+        "--screenshot-max-width=1280"
+      ]
+    }
+  }
+}
