@@ -37,7 +37,7 @@ export const slides = [
   <Slide key="chrome-devtools-mcp_2">
     <h2>Chrome DevTools MCP</h2>
 
-    <Code title=".mcp.json" fontSize={14}>
+    <Code lang="json" title=".mcp.json" fontSize={14}>
       {`{
   "mcpServers": {
     "chrome-devtools": {

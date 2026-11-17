@@ -18,6 +18,7 @@
   "dependencies": {
     "@takumi-rs/helpers": "catalog:pdf",
     "react": "catalog:react",
+    "shiki": "catalog:highlight",
     "takumi-pdf": "catalog:pdf",
     "vite": "catalog:tooling"
   },

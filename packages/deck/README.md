@@ -54,14 +54,18 @@ await writeFile(out, pdf);
 `Code` に文字列を渡す。改行とインデントはそのまま残るので、テンプレートリテラルで書く。
 
 ```tsx
-<Code title=".mcp.json" fontSize={16}>
+<Code lang="json" title=".mcp.json" fontSize={16}>
   {`{
   "mcpServers": {}
 }`}
 </Code>
 ```
 
-長い行は折り返す。PDF では枠からはみ出した分が黙って切り捨てられるので、 `white-space: pre` は使わない。**構文ハイライトはしない**（色を付けたくなったら shiki などで着色した `span` を `Code` の children に渡す）。
+`lang` を渡すと [Shiki](https://shiki.style/) で着色する（`bash` / `json` / `tsx`）。省略すれば素のテキスト。
+
+長い行は折り返す。PDF では枠からはみ出した分が黙って切り捨てられるので、 `white-space: pre` は使わない。
+
+着色は `codeToTokensBase()` のトークンを 1 つずつ `span` のインライン `color` にする。takumi はスタイルシートのクラスを解釈しないので `codeToHtml()` の HTML は使えない。ハイライターは `createHighlighterCoreSync()` + JavaScript 正規表現エンジンで作っており、WASM も非同期の初期化も無い（プレビューのブラウザでも同じコードが動く）。言語を増やすときは `code.tsx` の import と `LANGS` に足す。文法が読めないときは `forgiving: true` で着色だけ諦める。
 
 ## API
 
@@ -69,7 +73,7 @@ await writeFile(out, pdf);
 | --- | --- |
 | `renderDeck({ deck, slides, ... })` | `@koralle/deck/pdf` から。PDF のバイト列(`Uint8Array`)を返す |
 | `Slide` | 1ページ分の枠。1要素 = 1ページ |
-| `Code` | コード片。等幅 + 薄い背景の枠。`title`（見出し）と `fontSize` を取る |
+| `Code` | コード片。等幅 + 薄い背景の枠。`title`（見出し）/ `lang`（着色）/ `fontSize` を取る |
 | `SLIDE_SIZE` | 1280x720px(16:9)。PDF では 960x540pt になる |
 | `SLIDE_THEME` | 既定の色（`background` / `color` / `muted` / `codeBackground` / `codeBorder`） |
 | `DEFAULT_FONT_FAMILY` | `'LINE Seed JP'` |
