@@ -8,7 +8,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "pdf": "tsx src/pdf.tsx",
+    "pdf": "tsx --tsconfig ../../tsconfig.tsx.jsonc src/pdf.tsx",
     "preview": "vite",
     "typecheck": "tsrs"
   },

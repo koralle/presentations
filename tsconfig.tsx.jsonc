@@ -1,0 +1,9 @@
+{
+  // `tsx` が PDF を作るときに渡す tsconfig（`tsx --tsconfig ../../tsconfig.tsx.jsonc`）。
+  // tsx は tsconfig を 1 つしか読まず、その `include` に入っているファイルだけに
+  // `jsx` を当てる。デッキ側の tsconfig だけだと `packages/*/src` の .tsx が
+  // classic 変換になり `React is not defined` で落ちるので、全ソースを含む設定を渡す。
+  // 型チェック（tsrs）は各パッケージの tsconfig で行うので、ここは変換のためだけ。
+  "extends": "@koralle/forge/tsconfig/react.json",
+  "include": ["slides/*/src", "slides/*/preview", "packages/*/src"],
+}

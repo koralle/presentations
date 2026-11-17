@@ -1,4 +1,4 @@
-import { Slide, SLIDE_THEME } from "@koralle/deck";
+import { Code, Slide, SLIDE_THEME } from "@koralle/deck";
 
 // 仮のスライド。発表内容に差し替える。
 // 1要素 = 1ページ。`Slide` を並べるだけで改ページされる。
@@ -28,5 +28,37 @@ export const slides = [
     <p style={{ fontSize: 28, margin: 0 }}>
       pnpm --filter react-tokyo-2026-11-20 pdf で dist/ に PDF が出る
     </p>
+  </Slide>,
+
+  <Slide key="chrome-devtools-mcp_1">
+    <h2>Chrome DevTools MCP</h2>
+  </Slide>,
+
+  <Slide key="chrome-devtools-mcp_2">
+    <h2>Chrome DevTools MCP</h2>
+
+    <Code title=".mcp.json" fontSize={14}>
+      {`{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "chrome-devtools-mcp@1.13.0",
+        "--no-usage-statistics",
+        "--allowed-url-pattern=http://localhost:*/*",
+        "--allowed-url-pattern=http://127.0.0.1:*/*",
+        "--allowed-url-pattern=https://*.localhost/*",
+        "--isolated",
+        "--file-navigations=false",
+        "--no-performance-crux",
+        "--redact-network-headers",
+        "--screenshot-format=webp",
+        "--screenshot-max-width=1280"
+      ]
+    }
+  }
+}`}
+    </Code>
   </Slide>,
 ];

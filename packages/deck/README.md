@@ -32,7 +32,7 @@ export const slides = [
 ```
 
 ```ts
-// src/pdf.tsx  （package.json の "pdf": "tsx src/pdf.tsx" から呼ぶ）
+// src/pdf.tsx  （package.json の "pdf": "tsx --tsconfig ../../tsconfig.tsx.jsonc src/pdf.tsx" から呼ぶ）
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -49,14 +49,29 @@ await writeFile(out, pdf);
 
 `pnpm pdf`（ルート）か `pnpm --filter <deck> pdf` で `dist/` に PDF が出る。
 
+## コードを載せる
+
+`Code` に文字列を渡す。改行とインデントはそのまま残るので、テンプレートリテラルで書く。
+
+```tsx
+<Code title=".mcp.json" fontSize={16}>
+  {`{
+  "mcpServers": {}
+}`}
+</Code>
+```
+
+長い行は折り返す。PDF では枠からはみ出した分が黙って切り捨てられるので、 `white-space: pre` は使わない。**構文ハイライトはしない**（色を付けたくなったら shiki などで着色した `span` を `Code` の children に渡す）。
+
 ## API
 
 | 名前 | 内容 |
 | --- | --- |
 | `renderDeck({ deck, slides, ... })` | `@koralle/deck/pdf` から。PDF のバイト列(`Uint8Array`)を返す |
 | `Slide` | 1ページ分の枠。1要素 = 1ページ |
+| `Code` | コード片。等幅 + 薄い背景の枠。`title`（見出し）と `fontSize` を取る |
 | `SLIDE_SIZE` | 1280x720px(16:9)。PDF では 960x540pt になる |
-| `SLIDE_THEME` | 既定の色（`background` / `color` / `muted`） |
+| `SLIDE_THEME` | 既定の色（`background` / `color` / `muted` / `codeBackground` / `codeBorder`） |
 | `DEFAULT_FONT_FAMILY` | `'LINE Seed JP'` |
 | `CODE_FONT_FAMILY` | `'UDEV Gothic', monospace`（`pre` / `code` / `kbd` / `samp`） |
 | `DEFAULT_FONT_FACES` | 既定で登録するフェイス（`fonts/` のファイルとファミリー・太さ） |
@@ -65,11 +80,19 @@ await writeFile(out, pdf);
 
 ## 実装上の注意
 
-### JSX を使っていない
+### JSX を変換させるには `--tsconfig` が要る
 
-このパッケージのソースは `createElement` で組んである（`Slide` も含む）。tsx は tsconfig の `jsx` を cwd 基準で解決するため、デッキ（cwd）から `@koralle/deck` の `exports` 経由で読み込まれた `.tsx` は classic 変換になり `React is not defined` で落ちる。ここを JSX にしないことでローダの都合から切り離している。
+このパッケージのソース（`index.tsx` / `code.tsx`）はふつうに JSX で書いてある。ただし `tsx` は tsconfig を **1 つだけ**読み、しかもその `include` に入っているファイルにしか `jsx` を当てない。デッキ側の tsconfig を cwd から読ませると、`packages/*/src` の `.tsx` は **classic 変換**になり `React is not defined` で落ちる。
 
-デッキ側（cwd のパッケージ）の `.tsx` は通常どおり JSX で書ける。
+そのため PDF を作るスクリプトはリポジトリ直下の `tsconfig.tsx.jsonc`（全ソースを含む）を渡している。
+
+```json
+"pdf": "tsx --tsconfig ../../tsconfig.tsx.jsonc src/pdf.tsx"
+```
+
+新しいデッキを足すときもこの形にする。型チェック（`tsrs`）は各パッケージの `tsconfig.json` が見るので、`tsconfig.tsx.jsonc` は変換のためだけの設定。
+
+`index.tsx` と `code.tsx` が共有する色とフォントは `theme.ts` にある。
 
 ### 1ページ = 1スライド
 

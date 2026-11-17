@@ -1,15 +1,13 @@
-import { createElement } from "react";
 import type { ReactNode } from "react";
 
+import { CODE_FONT_FAMILY_NAME, SLIDE_THEME } from "./theme";
+
 /**
- * このパッケージの中身は JSX を使わず `createElement` で組む。
- *
- * tsx は tsconfig の `jsx` を cwd 基準で解決するため、デッキ（cwd）から
- * `@koralle/deck` の `exports` 経由で読み込まれた .tsx は classic 変換になり
- * `React is not defined` で落ちる。ここを JSX にしないことでローダの都合から切り離す。
- *
  * このファイルはブラウザからも読める（プレビューが `slides.tsx` 経由で読む）。
  * takumi-pdf に依存する `renderDeck` は `@koralle/deck/pdf` に分けてある。
+ *
+ * JSX で書いてよいが、PDF を作る `tsx` はリポジトリ直下の `tsconfig.tsx.jsonc` を
+ * `--tsconfig` で渡す必要がある（このパッケージの .tsx も変換対象にするため）。
  */
 
 /** スライド1枚のサイズ（CSS px）。16:9 で、PDF では 960x540pt(96dpi) になる。 */
@@ -20,12 +18,6 @@ export const FONT_FAMILY_NAME = "LINE Seed JP";
 
 /** 既定のフォント。実ファイルは `packages/deck/fonts` に置いてある。 */
 export const DEFAULT_FONT_FAMILY = `'${FONT_FAMILY_NAME}'`;
-
-/** コード（`pre` / `code` / `kbd` / `samp`）のフォントのファミリー名。 */
-export const CODE_FONT_FAMILY_NAME = "UDEV Gothic";
-
-/** コードのフォント。字体が読めない環境では等幅に落とす。 */
-export const CODE_FONT_FAMILY = `'${CODE_FONT_FAMILY_NAME}', monospace`;
 
 /**
  * 既定で登録するフェイス。本文が LINE Seed JP、コードが UDEV Gothic。
@@ -42,13 +34,6 @@ export const DEFAULT_FONT_FACES = [
   },
   { family: CODE_FONT_FAMILY_NAME, file: "UDEVGothic-Bold.ttf", weight: 700 },
 ] as const;
-
-/** 既定の色。デッキごとに `Slide` の props で上書きする。 */
-export const SLIDE_THEME = {
-  background: "#ffffff",
-  color: "#111111",
-  muted: "#5f6470",
-} as const;
 
 export interface SlideProps {
   children?: ReactNode;
@@ -76,26 +61,25 @@ export const Slide = ({
   color = SLIDE_THEME.color,
   padding = 80,
   align = "center",
-}: SlideProps) =>
-  createElement(
-    "section",
-    {
-      style: {
-        height: "100vh",
-        breakAfter: "page",
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: align === "center" ? "center" : "flex-start",
-        gap: "24px",
-        padding: `${padding}px`,
-        backgroundColor: background,
-        color,
-        fontFamily: DEFAULT_FONT_FAMILY,
-      },
-    },
-    children
-  );
+}: SlideProps) => (
+  <section
+    style={{
+      height: "100vh",
+      breakAfter: "page",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: align === "center" ? "center" : "flex-start",
+      gap: "24px",
+      padding: `${padding}px`,
+      backgroundColor: background,
+      color,
+      fontFamily: DEFAULT_FONT_FAMILY,
+    }}
+  >
+    {children}
+  </section>
+);
 
 export interface DeckMeta {
   title?: string;
@@ -103,3 +87,9 @@ export interface DeckMeta {
   /** 発表日(`YYYY-MM-DD`)。PDF のメタデータにだけ使う。 */
   date?: string;
 }
+
+export { CODE_FONT_FAMILY, CODE_FONT_FAMILY_NAME, SLIDE_THEME } from "./theme";
+
+export { Code } from "./code";
+
+export type { CodeProps } from "./code";
