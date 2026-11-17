@@ -28,8 +28,10 @@ const STEP_BY_KEY = new Map([
 ]);
 
 /**
- * その要素が持っていくキーか。ボタンの Space/Enter と、入力欄への入力（文字キー・
- * 矢印）は横取りしない。ボタンにフォーカスが残っていても `O` や `j` は効かせる。
+ * その要素が持っていくキーか。入力欄と選択肢（select・checkbox・radio など、
+ * `:read-write` に一致しないフォーム部品も含む）はすべてのキーを、ボタンと
+ * リンクは Space/Enter を自分のものにする。ボタンにフォーカスが残っていても
+ * `O` や `j` は効かせる。
  */
 const isControlKey = (event: KeyboardEvent): boolean => {
   const { target } = event;
@@ -38,7 +40,7 @@ const isControlKey = (event: KeyboardEvent): boolean => {
     return false;
   }
 
-  if (target.closest(":read-write") !== null) {
+  if (target.closest(":read-write, input, select, textarea") !== null) {
     return true;
   }
 

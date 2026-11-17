@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Button, ToggleButton } from "react-aria-components";
 
 import { css, cx } from "../../styled-system/css";
+import { stepAndKeepFocus } from "../hooks/use-slide-navigation";
 import type { Mode } from "../hooks/use-slide-navigation";
 
 const styles = {
@@ -122,19 +123,6 @@ export const ViewerToolbar = ({
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
 
-  /**
-   * 押した結果そのボタンが無効になると、ブラウザはフォーカスを `body` に落とす。
-   * 次の Tab が先頭からやり直しになるので、無効になる一歩手前なら反対側へ渡す。
-   */
-  const stepAndKeepFocus = (delta: number) => {
-    step(delta);
-    const becomesDisabled = delta > 0 ? index >= total - 2 : index <= 1;
-
-    if (becomesDisabled) {
-      (delta > 0 ? prevRef : nextRef).current?.focus();
-    }
-  };
-
   return (
     <header className={styles.bar}>
       <p className={styles.title}>{label}</p>
@@ -145,7 +133,7 @@ export const ViewerToolbar = ({
             className={buttonStyles()}
             isDisabled={index <= 0}
             onPress={() => {
-              stepAndKeepFocus(-1);
+              stepAndKeepFocus(step, -1, index, total, prevRef, nextRef);
             }}
             ref={prevRef}
           >
@@ -160,7 +148,7 @@ export const ViewerToolbar = ({
             className={buttonStyles()}
             isDisabled={index >= total - 1}
             onPress={() => {
-              stepAndKeepFocus(1);
+              stepAndKeepFocus(step, 1, index, total, prevRef, nextRef);
             }}
             ref={nextRef}
           >

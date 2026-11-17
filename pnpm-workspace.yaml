@@ -2,9 +2,6 @@ packages:
   - "slides/*"
   - "packages/*"
 
-catalog:
-  react-scan: 0.5.7
-
 catalogMode: strict
 
 # 依存パッケージ同梱スキルのエージェントへの受け渡しは APM に一本化する。

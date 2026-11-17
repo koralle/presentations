@@ -7,13 +7,27 @@ import { TOTAL } from "../params";
 
 /**
  * E2E の題材。20 枚あれば「先頭 / 末尾 / 途中」と一覧の折り返しを全部踏める。
- * 5 枚目だけ入力欄を持つ（デッキは入力欄を持つスライドを置けるので、キーを
- * 横取りしないことをここで見る）。
+ * 5 枚目だけ入力欄と選択肢を持つ（デッキはインタラクティブな部品をスライドに
+ * 置けるので、キーを横取りしないことをここで見る）。
  */
 const slides: ReactNode[] = Array.from({ length: TOTAL }, (_, index) => (
   <Slide key={index}>
     <h1 style={{ fontSize: 64, margin: 0 }}>{index + 1} 枚目</h1>
-    {index === 4 ? <input aria-label="メモ" /> : null}
+    {index === 4 ? (
+      <>
+        <input aria-label="メモ" />
+        <label>
+          <input type="checkbox" /> 同意する
+        </label>
+        <select
+          aria-label="色"
+          style={{ backgroundColor: "#ffffff", colorScheme: "light" }}
+        >
+          <option value="red">赤</option>
+          <option value="blue">青</option>
+        </select>
+      </>
+    ) : null}
   </Slide>
 ));
 

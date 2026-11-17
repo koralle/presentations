@@ -300,3 +300,24 @@ test("入力欄の中ではキーを横取りしない", async ({ page }) => {
   await expect(input).toHaveValue("jjlG");
   await expectStays(page, 5);
 });
+
+test("チェックボックスと選択肢のキーも横取りしない", async ({ page }) => {
+  await open(page, "#5");
+  await expectAt(page, 5);
+
+  const checkbox = page.getByRole("checkbox", { name: "同意する" });
+  await checkbox.click();
+  await expect(checkbox).toBeChecked();
+
+  // Space はチェックのトグルに回り、スライドは動かない。
+  await page.keyboard.press(" ");
+  await expect(checkbox).not.toBeChecked();
+  await expectStays(page, 5);
+
+  const color = page.getByRole("combobox", { name: "色" });
+  await color.focus();
+  // 矢印は選択肢の操作に回る（値の変わり方は環境依存 — macOS ではポップアップを
+  // 開くだけ）。ここで見るのは、矢印でスライドが動かないこと。
+  await page.keyboard.press("ArrowDown");
+  await expectStays(page, 5);
+});

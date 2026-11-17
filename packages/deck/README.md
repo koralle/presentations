@@ -32,7 +32,7 @@ export const slides = [
 ```
 
 ```ts
-// src/pdf.ts  （package.json の "pdf": "tsx src/pdf.ts" から呼ぶ）
+// src/pdf.tsx  （package.json の "pdf": "tsx src/pdf.tsx" から呼ぶ）
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 

@@ -95,3 +95,26 @@ export const useSlideNavigation = (
 
   return { go, index, mode, step, toggleMode };
 };
+
+/**
+ * 前後ボタンを押す。押した結果そのボタン自身が無効になると、ブラウザはフォーカスを
+ * `body` に落とす（次の Tab が先頭からやり直しになる）。無効になる側を押したときは
+ * 反対側のボタンへ渡す。ツールバーとスライドの左右ボタンが同じ扱いを必要とする
+ * ため、ここに共有で置く。
+ */
+export const stepAndKeepFocus = (
+  step: (delta: number) => void,
+  delta: number,
+  index: number,
+  total: number,
+  prevRef: RefObject<HTMLButtonElement | null>,
+  nextRef: RefObject<HTMLButtonElement | null>
+) => {
+  step(delta);
+
+  const becomesDisabled = delta > 0 ? index >= total - 2 : index <= 1;
+
+  if (becomesDisabled) {
+    (delta > 0 ? prevRef : nextRef).current?.focus();
+  }
+};

@@ -5,6 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { Button } from "react-aria-components";
 
 import { css, cx } from "../../styled-system/css";
+import { stepAndKeepFocus } from "../hooks/use-slide-navigation";
 
 /**
  * スライドの切り替え（{@link ViewTransition}）のクラス名。CSS 側は viewer.css。
@@ -181,19 +182,6 @@ export const SlideStage = ({ index, total, slide, step }: SlideStageProps) => {
   const nextRef = useRef<HTMLButtonElement>(null);
 
   /**
-   * 押した結果そのボタンが無効になると、ブラウザはフォーカスを `body` に落とす
-   * （ツールバーのボタンと同じ扱い）。反対側へ渡す。
-   */
-  const stepAndKeepFocus = (delta: number) => {
-    step(delta);
-    const becomesDisabled = delta > 0 ? index >= total - 2 : index <= 1;
-
-    if (becomesDisabled) {
-      (delta > 0 ? prevRef : nextRef).current?.focus();
-    }
-  };
-
-  /**
    * 枠が入る倍率を測る。ref コールバックにしているのは、一覧に切り替えると
    * `viewport` が作り直されるため。effect で 1 度だけ observe すると、外れた
    * 古い要素を測り続けて倍率が 0 のままになる。
@@ -242,7 +230,7 @@ export const SlideStage = ({ index, total, slide, step }: SlideStageProps) => {
             className={cx(styles.side, styles.sideStart)}
             isDisabled={index <= 0}
             onPress={() => {
-              stepAndKeepFocus(-1);
+              stepAndKeepFocus(step, -1, index, total, prevRef, nextRef);
             }}
             ref={prevRef}
           >
@@ -253,7 +241,7 @@ export const SlideStage = ({ index, total, slide, step }: SlideStageProps) => {
             className={cx(styles.side, styles.sideEnd)}
             isDisabled={index >= total - 1}
             onPress={() => {
-              stepAndKeepFocus(1);
+              stepAndKeepFocus(step, 1, index, total, prevRef, nextRef);
             }}
             ref={nextRef}
           >
