@@ -240,9 +240,6 @@ catalogs:
     knip:
       specifier: 6.45.1
       version: 6.45.1
-    tsx:
-      specifier: 4.23.15
-      version: 4.23.15
     vite:
       specifier: 8.3.8
       version: 8.3.8
@@ -294,6 +291,9 @@ importers:
       takumi-pdf:
         specifier: catalog:pdf
         version: 0.20.0(react@19.3.1)
+      vite:
+        specifier: catalog:tooling
+        version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
     devDependencies:
       '@koralle/forge':
         specifier: workspace:*
@@ -417,9 +417,6 @@ importers:
       tsrs:
         specifier: catalog:typescript
         version: 0.25.0-ts7.1.0-beta
-      tsx:
-        specifier: catalog:tooling
-        version: 4.23.15
       vite:
         specifier: catalog:tooling
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
@@ -3322,6 +3319,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.28.2
       '@esbuild/win32-ia32': 0.28.2
       '@esbuild/win32-x64': 0.28.2
+    optional: true
 
   execa@10.2.1:
     dependencies:
@@ -3884,6 +3882,7 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   ufo@1.6.4: {}
 

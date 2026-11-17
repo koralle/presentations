@@ -6,8 +6,8 @@ import { CODE_FONT_FAMILY_NAME, SLIDE_THEME } from "./theme";
  * このファイルはブラウザからも読める（プレビューが `slides.tsx` 経由で読む）。
  * takumi-pdf に依存する `renderDeck` は `@koralle/deck/pdf` に分けてある。
  *
- * JSX で書いてよいが、PDF を作る `tsx` はリポジトリ直下の `tsconfig.tsx.jsonc` を
- * `--tsconfig` で渡す必要がある（このパッケージの .tsx も変換対象にするため）。
+ * PDF を作るときは `deck-pdf`（bin/pdf.mjs）が Vite に変換させる。このパッケージの
+ * .tsx も変換対象になるので、JSX で書いてよい。
  */
 
 /** スライド1枚のサイズ（CSS px）。16:9 で、PDF では 960x540pt(96dpi) になる。 */

@@ -10,7 +10,7 @@ skills:
   dirs: []
 
 allowBuilds:
-  # tsx が使う。ビルドスクリプトを許可しないと install が止まる
+  # Vite の依存の最適化が使う。ビルドスクリプトを許可しないと install が止まる
   esbuild: true
   # Panda の Vite プラグインが watch に使う（native binding）
   "@parcel/watcher": true
@@ -46,7 +46,6 @@ catalogs:
     "@playwright/test": 1.65.1
     "@vitejs/plugin-react": 6.3.0
     knip: 6.45.1
-    tsx: 4.23.15
     vite: 8.3.8
 
   typescript:

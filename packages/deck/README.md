@@ -32,7 +32,7 @@ export const slides = [
 ```
 
 ```ts
-// src/pdf.tsx  （package.json の "pdf": "tsx --tsconfig ../../tsconfig.tsx.jsonc src/pdf.tsx" から呼ぶ）
+// src/pdf.tsx  （package.json の "pdf": "deck-pdf src/pdf.tsx" から呼ぶ）
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -80,17 +80,17 @@ await writeFile(out, pdf);
 
 ## 実装上の注意
 
-### JSX を変換させるには `--tsconfig` が要る
+### PDF は Vite に変換させて Node で動かす
 
-このパッケージのソース（`index.tsx` / `code.tsx`）はふつうに JSX で書いてある。ただし `tsx` は tsconfig を **1 つだけ**読み、しかもその `include` に入っているファイルにしか `jsx` を当てない。デッキ側の tsconfig を cwd から読ませると、`packages/*/src` の `.tsx` は **classic 変換**になり `React is not defined` で落ちる。
-
-そのため PDF を作るスクリプトはリポジトリ直下の `tsconfig.tsx.jsonc`（全ソースを含む）を渡している。
+PDF を作るのは `deck-pdf`（このパッケージの `bin/pdf.mjs`）。デッキのスクリプトを Vite に変換させて Node で実行する。実行は `ModuleRunner`（`server.environments.ssr.runner.import()`）経由で、`ssrLoadModule()` は ModuleRunner に置き換わった非推奨 API なので使わない。
 
 ```json
-"pdf": "tsx --tsconfig ../../tsconfig.tsx.jsonc src/pdf.tsx"
+"pdf": "deck-pdf src/pdf.tsx"
 ```
 
-新しいデッキを足すときもこの形にする。型チェック（`tsrs`）は各パッケージの `tsconfig.json` が見るので、`tsconfig.tsx.jsonc` は変換のためだけの設定。
+`tsx` を使わないのは、tsx が tsconfig を **1 つだけ**読み、その `include` に入っているファイルにしか `jsx` を当てないため。デッキ（cwd）の tsconfig を読ませると `packages/deck/src/*.tsx` が **classic 変換**になり `React is not defined` で落ちる。Vite はプレビューと同じ変換器なので、`--tsconfig` のような回避策なしで両方の `.tsx` を扱える。
+
+`configFile: false` で起動している。デッキ側の `vite.config.ts` はプレビュー用（`root` を `preview/` に固定し Panda を挟む）で、PDF には要らない。
 
 `index.tsx` と `code.tsx` が共有する色とフォントは `theme.ts` にある。
 
