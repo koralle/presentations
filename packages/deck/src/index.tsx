@@ -1,16 +1,14 @@
-import { createElement } from "react";
-import type { ReactNode } from "react";
-
 /**
- * このパッケージの中身は JSX を使わず `createElement` で組む。
- *
- * tsx は tsconfig の `jsx` を cwd 基準で解決するため、デッキ（cwd）から
- * `@koralle/deck` の `exports` 経由で読み込まれた .tsx は classic 変換になり
- * `React is not defined` で落ちる。ここを JSX にしないことでローダの都合から切り離す。
- *
  * このファイルはブラウザからも読める（プレビューが `slides.tsx` 経由で読む）。
  * takumi-pdf に依存する `renderDeck` は `@koralle/deck/pdf` に分けてある。
  */
+
+// tsx は cwd の tsconfig の `include` 外にあるファイルには `jsx` を渡さないため、
+// デッキから `exports` 経由で読まれるここの JSX は既定の classic 変換になり
+// `React is not defined` で落ちる。ランタイムを esbuild の pragma で固定しておく。
+// @jsxRuntime automatic
+
+import type { ReactNode } from "react";
 
 /** スライド1枚のサイズ（CSS px）。16:9 で、PDF では 960x540pt(96dpi) になる。 */
 export const SLIDE_SIZE = { width: 1280, height: 720 } as const;
@@ -76,26 +74,25 @@ export const Slide = ({
   color = SLIDE_THEME.color,
   padding = 80,
   align = "center",
-}: SlideProps) =>
-  createElement(
-    "section",
-    {
-      style: {
-        height: "100vh",
-        breakAfter: "page",
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: align === "center" ? "center" : "flex-start",
-        gap: "24px",
-        padding: `${padding}px`,
-        backgroundColor: background,
-        color,
-        fontFamily: DEFAULT_FONT_FAMILY,
-      },
-    },
-    children
-  );
+}: SlideProps) => (
+  <section
+    style={{
+      height: "100vh",
+      breakAfter: "page",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: align === "center" ? "center" : "flex-start",
+      gap: "24px",
+      padding: `${padding}px`,
+      backgroundColor: background,
+      color,
+      fontFamily: DEFAULT_FONT_FAMILY,
+    }}
+  >
+    {children}
+  </section>
+);
 
 export interface DeckMeta {
   title?: string;
