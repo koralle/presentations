@@ -65,9 +65,11 @@ await writeFile(out, pdf);
 
 ## 実装上の注意
 
-### JSX を使っていない
+### JSX は自動ランタイムを pragma で固定している
 
-このパッケージのソースは `createElement` で組んである（`Slide` も含む）。tsx は tsconfig の `jsx` を cwd 基準で解決するため、デッキ（cwd）から `@koralle/deck` の `exports` 経由で読み込まれた `.tsx` は classic 変換になり `React is not defined` で落ちる。ここを JSX にしないことでローダの都合から切り離している。
+このパッケージは JSX で書いてあるが、各ファイルの先頭に `// @jsxRuntime automatic` を置いている。
+
+tsx は cwd の tsconfig を読むが、その `include` に入っていないファイルには `compilerOptions` を渡さない。デッキ（cwd）から `exports` 経由で読まれるここの `.tsx` は `include` の外なので、pragma が無いと classic 変換になり `React is not defined` で落ちる。pragma で指定しておけば、デッキ側の tsconfig を触らずに済む。
 
 デッキ側（cwd のパッケージ）の `.tsx` は通常どおり JSX で書ける。
 

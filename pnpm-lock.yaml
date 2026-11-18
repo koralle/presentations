@@ -387,6 +387,9 @@ importers:
       tsrs:
         specifier: catalog:typescript
         version: 0.25.0-ts7.1.0-beta
+      ultracite:
+        specifier: catalog:lint
+        version: 8.2.1(oxfmt@0.79.0)(oxlint@1.94.0(oxlint-tsgolint@7.0.2007))
 
   slides/react-tokyo-2026-11-20:
     devDependencies:

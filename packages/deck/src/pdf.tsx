@@ -1,8 +1,9 @@
+// 自動ランタイムの固定については `src/index.tsx` の先頭コメント参照。
+// @jsxRuntime automatic
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { FontSubset } from "@takumi-rs/helpers";
-import { createElement } from "react";
 import type { ReactNode } from "react";
 import { render } from "takumi-pdf";
 import type { PdfMetadata } from "takumi-pdf";
@@ -92,11 +93,9 @@ export const renderDeck = async ({
   }
 
   return await render(
-    createElement(
-      "main",
-      { style: { display: "block", fontFamily: DEFAULT_FONT_FAMILY } },
-      ...slides
-    ),
+    <main style={{ display: "block", fontFamily: DEFAULT_FONT_FAMILY }}>
+      {slides}
+    </main>,
     {
       size,
       margin,

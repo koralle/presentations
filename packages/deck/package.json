@@ -5,9 +5,9 @@
   "description": "JSX slides rendered to PDF with takumi-pdf",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
+    ".": "./src/index.tsx",
     "./fonts.css": "./src/fonts.css",
-    "./pdf": "./src/pdf.ts"
+    "./pdf": "./src/pdf.tsx"
   },
   "scripts": {
     "typecheck": "tsrs"

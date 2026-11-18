@@ -24,6 +24,8 @@ type CreateOxlintConfigOptions = Omit<
   OxlintConfig,
   "extends" | "ignorePatterns"
 > & {
+  /** パッケージ固有で継承したいプリセット。共通の設定の後ろに連結される。 */
+  extends?: OxlintConfig[];
   /** パッケージ固有で追加したい ignore。共通の ignore の後ろに連結される。 */
   ignorePatterns?: string[];
 };
@@ -33,11 +35,12 @@ type CreateOxlintConfigOptions = Omit<
  * 呼び出し側は差分だけを渡せばよい（`ignorePatterns` の再宣言漏れを防ぐ）。
  */
 export const createOxlintConfig = ({
+  extends: additionalExtends = [],
   ignorePatterns: additionalIgnorePatterns = [],
   ...rest
 }: CreateOxlintConfigOptions = {}) =>
   defineConfig({
-    extends: [oxlintConfig],
+    extends: [oxlintConfig, ...additionalExtends],
     ignorePatterns: [...ignorePatterns, ...additionalIgnorePatterns],
     ...rest,
   });

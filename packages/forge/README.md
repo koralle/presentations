@@ -42,11 +42,11 @@ strictest に無いものとして、次を足している。
 | `jsx` = `react-jsx` / `jsxImportSource` = `react` | 自動ランタイム。`jsxImportSource` は省略しても変換結果は同じだが、**knip がこの値を見て `react` を依存として数える**ので明示する（無いと `react` / `@types/react` が未使用と報告される） |
 | `lib` に `dom` | `@types/react` が DOM の型を参照するため |
 
-`tsx` は tsconfig の `jsx` を **cwd 基準**で解決する。デッキ（cwd）から別パッケージの `.tsx` を `exports` 経由で読むと classic 変換に落ちて `React is not defined` になるので、共有パッケージ側は JSX を使わない（`packages/deck` がその例）。
+`tsx` は cwd の tsconfig を読むが、その `include` の外にあるファイルには `compilerOptions` を渡さない。デッキ（cwd）から別パッケージの `.tsx` を `exports` 経由で読むと classic 変換に落ちて `React is not defined` になるので、共有パッケージの JSX はファイル先頭の `// @jsxRuntime automatic` で自動ランタイムを固定する（`packages/deck` がその例）。
 
 ## `types` は自動で入らない
 
-`tsrs` は `node_modules/@types` を自動では読まない。Node の API を使うパッケージは `@types/node` を入れたうえで `"types": ["node"]` を明示する（`slides/*` の `src/pdf.ts` が該当）。
+`tsrs` は `node_modules/@types` を自動では読まない。Node の API を使うパッケージは `@types/node` を入れたうえで `"types": ["node"]` を明示する（`slides/*` の `src/pdf.tsx` が該当）。
 
 ## 型チェック
 
@@ -66,7 +66,20 @@ export default createOxlintConfig({ ignorePatterns: ["scripts/**"] });
 
 共通の ignore は `.agents/`（APM が配置するスキル）と `apm_modules/`（その取得キャッシュ）。どちらもこのリポジトリのソースではない。
 
-`react` / `tanstack` のプリセットはまだ入れていない。React を使うパッケージを作るときに `extends` へ足す。
+パッケージ固有のプリセットは `extends` で足す。forge の設定の**後ろ**に連結される:
+
+```ts
+// packages/preview/oxlint.config.ts
+import { createOxlintConfig } from "@koralle/forge/oxlint";
+import playwright from "ultracite/oxlint/playwright";
+import react from "ultracite/oxlint/react";
+
+export default createOxlintConfig({ extends: [react, playwright] });
+```
+
+`ultracite` を直接 import するパッケージは、自分の `devDependencies` にも `ultracite` を入れる（pnpm は依存していないパッケージを見せない）。
+
+`core` に含まれない `react` / `playwright` / `tanstack` などのプリセットは、使うパッケージの設定でだけ有効にする。`packages/deck` は JSX を持つがフックも配列の子要素も無いので、今のところ `react` は入れていない。
 
 ## Oxfmt
 
