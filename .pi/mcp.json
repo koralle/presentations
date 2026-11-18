@@ -1,5 +1,14 @@
 {
   "mcpServers": {
+    "playwright": {
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@playwright/mcp@0.0.85",
+        "--sandbox",
+        "--isolated"
+      ]
+    },
     "chrome-devtools": {
       "command": "pnpm",
       "args": [

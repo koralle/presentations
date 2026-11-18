@@ -13,3 +13,6 @@ apm_modules/
 
 # macOS のメタデータ
 .DS_Store
+
+# Playwright MCP のスナップショットとスクリーンショット
+.playwright-mcp/
