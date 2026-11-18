@@ -99,7 +99,7 @@ await writeFile(out, pdf);
 | `Slide` | 1ページ分の枠。1要素 = 1ページ |
 | `Code` | コード片。等幅 + 薄い背景の枠。`title`（見出し）/ `lang`（着色）/ `fontSize` を取る |
 | `SLIDE_SIZE` | 1280x720px(16:9)。PDF では 960x540pt になる |
-| `SLIDE_THEME` | 既定の色（`background` / `color` / `muted` / `codeBackground` / `codeBorder`） |
+| `SLIDE_THEME` | 既定の色（`background` / `color` / `muted` / `codeBackground` / `codeBorder` / `link`） |
 | `DEFAULT_FONT_FAMILY` | `'LINE Seed JP'` |
 | `CODE_FONT_FAMILY` | `'UDEV Gothic', monospace`（`pre` / `code` / `kbd` / `samp`） |
 | `DEFAULT_FONT_FACES` | 既定で登録するフェイス（`fonts/` のファイルとファミリー・太さ） |
@@ -135,7 +135,7 @@ PDF を作るのは `deck-pdf`（このパッケージの `bin/pdf.mjs`）。デ
 takumi はシステムフォントを読まない。既定ではこのパッケージの `fonts/` に置いた LINE Seed JP（本文）と UDEV Gothic（コード）を読んで登録する。`LINESeedJP-Regular.ttf` が
 本文、`LINESeedJP-Bold.ttf` が見出しと `<b>`/`<strong>`。ビルドにネットワークは要らない。
 
-takumi の UA スタイルシートは `code` / `pre` に等幅を当てないので、`renderDeck` が `CODE_FONT_FAMILY` を `pre` / `code` / `kbd` / `samp` に当てる CSS を一緒に渡している。
+takumi の UA スタイルシートは `code` / `pre` に等幅を当てないので、`renderDeck` が `CODE_FONT_FAMILY` を `pre` / `code` / `kbd` / `samp` に当てる CSS を一緒に渡している。同じ CSS でリンク（`a`）を青（`SLIDE_THEME.link`）にして下線を引き、`text-underline-offset: 3px` で文字から離す。プレビュー側は `fonts.css` の `a:any-link` が同じ役目で、リセット（kiso.css）の `text-decoration-line: unset` を上書きする（色は CSS から `theme.ts` を読めないので直書き）。
 
 プレビュー（ブラウザ）は同じファイルを `@koralle/deck/fonts.css` から `@font-face` で読む。
 別のフォントにしたいときは `renderDeck` の `fonts` に渡す。

@@ -12,6 +12,7 @@ import {
   DEFAULT_FONT_FACES,
   DEFAULT_FONT_FAMILY,
   SLIDE_SIZE,
+  SLIDE_THEME,
 } from "./index";
 import type { DeckMeta } from "./index";
 
@@ -39,10 +40,17 @@ const FONT_DIR = path.join(import.meta.dirname, "..", "fonts");
 const FULL_RANGE: [number, number][] = [[0, 0x10_ff_ff]];
 
 /**
- * takumi の UA スタイルシートは `code` / `pre` に等幅を当てないので、明示的に当てる。
- * プレビュー側は同じ指定が `fonts.css` にある。
+ * takumi の UA スタイルシートは `code` / `pre` に等幅を当てず、リンクにも下線を引かない。
+ * 明示的に当てる。プレビュー側は同じ指定が `fonts.css` にある。
  */
-const FONT_CSS = `pre, code, kbd, samp { font-family: ${CODE_FONT_FAMILY}; }`;
+const BASE_CSS = `
+pre, code, kbd, samp { font-family: ${CODE_FONT_FAMILY}; }
+a {
+  color: ${SLIDE_THEME.link};
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+`;
 
 /**
  * 既定のフォントをリポジトリ同梱のファイルから読む。ビルドにネットワークは要らない。
@@ -101,7 +109,7 @@ export const renderDeck = async ({
       size,
       margin,
       fonts: resolvedFonts,
-      css: FONT_CSS,
+      css: BASE_CSS,
       lang,
       metadata,
     }

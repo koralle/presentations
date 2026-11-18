@@ -18,4 +18,6 @@ export const SLIDE_THEME = {
   codeBackground: "#f6f7f9",
   /** コード片の枠線。 */
   codeBorder: "#e3e5ea",
+  /** リンクの色。 */
+  link: "#0969da",
 } as const;
