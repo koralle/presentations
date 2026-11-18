@@ -2,6 +2,7 @@ import { defineConfig } from "oxlint";
 import type { OxlintConfig } from "oxlint";
 import antiSlop from "ultracite/oxlint/anti-slop";
 import core from "ultracite/oxlint/core";
+import playwright from "ultracite/oxlint/playwright";
 
 /**
  * Oxlint は `extends` した設定の `ignorePatterns` を継承しない。
@@ -17,7 +18,7 @@ const ignorePatterns = [
 ];
 
 const oxlintConfig = defineConfig({
-  extends: [core, antiSlop],
+  extends: [core, playwright, antiSlop],
 });
 
 type CreateOxlintConfigOptions = Omit<
