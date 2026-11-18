@@ -68,8 +68,36 @@ const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine({ forgiving: true }),
 });
 
+/** 行頭の空白の数。 */
+const indentOf = (line: string): number =>
+  line.length - line.trimStart().length;
+
+/**
+ * テンプレートリテラルの共通のインデントを落とす。
+ *
+ * バックティックの直後が改行のときだけ効く（JSX の字下げに合わせて書いた場合）。
+ * 空行を除いた行の最小インデントを全行から引き、先頭と末尾の空行も捨てる。
+ *
+ * 直後からコードが始まる書き方では、JSX 側の字下げとコード自身のインデントを
+ * 区別できない（トップレベルの字下げを消すと階層が崩れる）ので何もしない。
+ */
+const dedent = (code: string): string => {
+  if (!code.startsWith("\n")) {
+    return code;
+  }
+
+  const lines = code.replace(/^\n+/u, "").trimEnd().split("\n");
+  const widths = lines.filter((line) => line.trim() !== "").map(indentOf);
+  const min = widths.length === 0 ? 0 : Math.min(...widths);
+
+  return lines.map((line) => line.slice(min)).join("\n");
+};
+
 export interface CodeProps {
-  /** コードの中身。文字列で渡す（`{}` の中でテンプレートリテラルにする）。 */
+  /**
+   * コードの中身。文字列で渡す（`{}` の中でテンプレートリテラルにする）。
+   * 行頭の共通のインデントは落とすので、JSX の字下げに合わせて書いてよい。
+   */
   children: string;
   /** ファイル名などの見出し。省略すると出ない。 */
   title?: string;
@@ -89,10 +117,12 @@ export interface CodeProps {
  * クラスを解釈しないので、Shiki の `codeToHtml` ではなくトークン API を使う。
  */
 export const Code = ({ children, title, lang, fontSize = 18 }: CodeProps) => {
+  const code = dedent(children);
+
   const lines =
     lang === undefined
       ? null
-      : highlighter.codeToTokensBase(children, { lang, theme: THEME });
+      : highlighter.codeToTokensBase(code, { lang, theme: THEME });
 
   return (
     <div
@@ -124,7 +154,7 @@ export const Code = ({ children, title, lang, fontSize = 18 }: CodeProps) => {
       >
         <code>
           {lines === null
-            ? children
+            ? code
             : lines.map((line, lineIndex) => (
                 // 行ごとに span で包んで改行を入れる（`pre-wrap` が改行を保つ）。
                 <span key={lineIndex}>

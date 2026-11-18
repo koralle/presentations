@@ -55,11 +55,15 @@ await writeFile(out, pdf);
 
 ```tsx
 <Code lang="json" title=".mcp.json" fontSize={16}>
-  {`{
-  "mcpServers": {}
-}`}
+  {`
+    {
+      "mcpServers": {}
+    }
+  `}
 </Code>
 ```
+
+バックティックの直後を改行すると、行頭の共通のインデントを落として先頭・末尾の空行も捨てる（= JSX の字下げに合わせて書ける）。直後からコードを書き始めた場合は、JSX 側の字下げとコード自身のインデントを区別できない（トップレベルの字下げを消すと階層が崩れる）ので何もしない。
 
 `lang` を渡すと [Shiki](https://shiki.style/) で着色する。省略すれば素のテキスト。使える言語は `code.tsx` の `LANGS` にある 13 文法と、その別名:
 
