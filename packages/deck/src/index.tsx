@@ -34,3 +34,11 @@ export type { CodeProps } from "./components/code";
 export { Slide } from "./components/slide";
 
 export type { SlideProps } from "./components/slide";
+
+export { CenterLayout, ContentLayout, TitleLayout } from "./components/layout";
+
+export type {
+  CenterLayoutProps,
+  ContentLayoutProps,
+  TitleLayoutProps,
+} from "./components/layout";

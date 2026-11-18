@@ -98,6 +98,9 @@ await writeFile(out, pdf);
 | `renderDeck({ deck, slides, ... })` | `@koralle/deck/pdf` から。PDF のバイト列(`Uint8Array`)を返す |
 | `Slide` | 1ページ分の枠。1要素 = 1ページ |
 | `Code` | コード片。等幅 + 薄い背景の枠。`title`（見出し）/ `lang`（着色）/ `fontSize` を取る |
+| `TitleLayout` | 表紙用レイアウト。`title`（必須）/ `subtitle`/ `meta`（日付など）。`Slide` の中に置き、縦位置は `Slide` の `align` に任せる |
+| `CenterLayout` | テキスト中央配置レイアウト。`children` を横中央に置く（既定 36px）。縦中央は `Slide` の既定 `align` |
+| `ContentLayout` | 見出し+コンテンツのレイアウト。`heading`（必須、JSX 可）+ `children`。Grid（`auto 1fr`）で `Slide` の内容領域を埋める |
 | `SLIDE_SIZE` | 1280x720px(16:9)。PDF では 960x540pt になる |
 | `SLIDE_THEME` | 既定の色（`background` / `color` / `muted` / `codeBackground` / `codeBorder` / `link`） |
 | `DEFAULT_FONT_FAMILY` | `'LINE Seed JP'` |

@@ -26,7 +26,7 @@ export const Slide = ({
   children,
   background = SLIDE_THEME.background,
   color = SLIDE_THEME.color,
-  padding = 80,
+  padding = 48,
   align = "center",
 }: SlideProps) => (
   <section
