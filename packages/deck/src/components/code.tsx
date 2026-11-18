@@ -15,7 +15,7 @@ import typescript from "shiki/langs/typescript.mjs";
 import yaml from "shiki/langs/yaml.mjs";
 import githubLight from "shiki/themes/github-light.mjs";
 
-import { CODE_FONT_FAMILY, SLIDE_THEME } from "./theme";
+import { CODE_FONT_FAMILY, SLIDE_THEME } from "../theme";
 
 /**
  * 着色に使う文法。`shiki/langs/*` を静的に読むと、その文法だけがバンドルに入る。
