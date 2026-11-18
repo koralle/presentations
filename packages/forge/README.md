@@ -66,7 +66,20 @@ export default createOxlintConfig({ ignorePatterns: ["scripts/**"] });
 
 共通の ignore は `.agents/`（APM が配置するスキル）と `apm_modules/`（その取得キャッシュ）。どちらもこのリポジトリのソースではない。
 
-`react` / `tanstack` のプリセットはまだ入れていない。React を使うパッケージを作るときに `extends` へ足す。
+パッケージ固有のプリセットは `extends` で足す。forge の設定の**後ろ**に連結される:
+
+```ts
+// packages/preview/oxlint.config.ts
+import { createOxlintConfig } from "@koralle/forge/oxlint";
+import playwright from "ultracite/oxlint/playwright";
+import react from "ultracite/oxlint/react";
+
+export default createOxlintConfig({ extends: [react, playwright] });
+```
+
+`ultracite` を直接 import するパッケージは、自分の `devDependencies` にも `ultracite` を入れる（pnpm は依存していないパッケージを見せない）。
+
+`core` に含まれない `react` / `playwright` / `tanstack` などのプリセットは、使うパッケージの設定でだけ有効にする。`packages/deck` は JSX を使わず `createElement` で組むので `react` を入れていない。
 
 ## Oxfmt
 

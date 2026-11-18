@@ -35,6 +35,7 @@
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
     "react-dom": "catalog:react",
-    "tsrs": "catalog:typescript"
+    "tsrs": "catalog:typescript",
+    "ultracite": "catalog:lint"
   }
 }
