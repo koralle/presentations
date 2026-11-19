@@ -32,7 +32,7 @@ export const slides = [
 ```
 
 ```ts
-// src/pdf.tsx  （package.json の "pdf": "tsx src/pdf.tsx" から呼ぶ）
+// src/pdf.tsx  （package.json の "pdf": "deck-pdf src/pdf.tsx" から呼ぶ）
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -49,14 +49,60 @@ await writeFile(out, pdf);
 
 `pnpm pdf`（ルート）か `pnpm --filter <deck> pdf` で `dist/` に PDF が出る。
 
+## コードを載せる
+
+`Code` に文字列を渡す。改行とインデントはそのまま残るので、テンプレートリテラルで書く。
+
+```tsx
+<Code lang="json" title=".mcp.json" fontSize={16}>
+  {`
+    {
+      "mcpServers": {}
+    }
+  `}
+</Code>
+```
+
+バックティックの直後を改行すると、行頭の共通のインデントを落として先頭・末尾の空行も捨てる（= JSX の字下げに合わせて書ける）。直後からコードを書き始めた場合は、JSX 側の字下げとコード自身のインデントを区別できない（トップレベルの字下げを消すと階層が崩れる）ので何もしない。
+
+`lang` を渡すと [Shiki](https://shiki.style/) で着色する。省略すれば素のテキスト。使える言語は `components/code.tsx` の `LANGS` にある 13 文法と、その別名:
+
+| 文法 (id)                      | 別名                            |
+| ------------------------------ | ------------------------------- |
+| `html` / `css`                 |                                 |
+| `javascript`                   | `js` / `cjs` / `mjs`            |
+| `jsx`                          |                                 |
+| `typescript`                   | `ts` / `cts` / `mts`            |
+| `tsx`                          |                                 |
+| `yaml`                         | `yml`                           |
+| `json` / `toml` / `nix` / `go` |                                 |
+| `rust`                         | `rs`                            |
+| `shellscript`                  | `bash` / `sh` / `shell` / `zsh` |
+
+増やすときは `shiki/langs/<id>.mjs` を import して `LANGS` に足す（`lang` の型も `Lang` に足す）。
+
+長い行は折り返す。PDF では枠からはみ出した分が黙って切り捨てられるので、 `white-space: pre` は使わない。
+
+着色は `codeToTokensBase()` のトークンを 1 つずつ `span` のインライン `color` にする。takumi はスタイルシートのクラスを解釈しないので `codeToHtml()` の HTML は使えない。
+
+ハイライターは `createHighlighterCoreSync()` + JavaScript 正規表現エンジンで同期的に作る（WASM も非同期の初期化も無い。プレビューのブラウザでも同じコードが動く）。文法を `shiki/langs/*` から静的に読んでいるので、登録した文法だけがバンドルに入る。
+
+言語を全言語（346）にすると初期化だけで 1.7 秒、プレビューのビルドが 9MB / 322 チャンクになる（PDF 生成 0.3 秒 → 2.8 秒）。必要になったら増やす方針で、いまは 13 文法。
+
+文法が読めないときは `forgiving: true` で着色だけ諦める。
+
 ## API
 
 | 名前 | 内容 |
 | --- | --- |
 | `renderDeck({ deck, slides, ... })` | `@koralle/deck/pdf` から。PDF のバイト列(`Uint8Array`)を返す |
 | `Slide` | 1ページ分の枠。1要素 = 1ページ |
+| `Code` | コード片。等幅 + 薄い背景の枠。`title`（見出し）/ `lang`（着色）/ `fontSize` を取る |
+| `TitleLayout` | 表紙用レイアウト。`title`（必須）/ `subtitle`/ `meta`（日付など）。`Slide` の中に置き、縦位置は `Slide` の `align` に任せる |
+| `CenterLayout` | テキスト中央配置レイアウト。`children` を横中央に置く（既定 36px）。縦中央は `Slide` の既定 `align` |
+| `ContentLayout` | 見出し+コンテンツのレイアウト。`heading`（必須、JSX 可）+ `children`。Grid（`auto 1fr`）で `Slide` の内容領域を埋める |
 | `SLIDE_SIZE` | 1280x720px(16:9)。PDF では 960x540pt になる |
-| `SLIDE_THEME` | 既定の色（`background` / `color` / `muted`） |
+| `SLIDE_THEME` | 既定の色（`background` / `color` / `muted` / `codeBackground` / `codeBorder` / `link`） |
 | `DEFAULT_FONT_FAMILY` | `'LINE Seed JP'` |
 | `CODE_FONT_FAMILY` | `'UDEV Gothic', monospace`（`pre` / `code` / `kbd` / `samp`） |
 | `DEFAULT_FONT_FACES` | 既定で登録するフェイス（`fonts/` のファイルとファミリー・太さ） |
@@ -65,13 +111,19 @@ await writeFile(out, pdf);
 
 ## 実装上の注意
 
-### JSX は自動ランタイムを pragma で固定している
+### PDF は Vite に変換させて Node で動かす
 
-このパッケージは JSX で書いてあるが、各ファイルの先頭に `// @jsxRuntime automatic` を置いている。
+PDF を作るのは `deck-pdf`（このパッケージの `bin/pdf.mjs`）。デッキのスクリプトを Vite に変換させて Node で実行する。実行は `ModuleRunner`（`server.environments.ssr.runner.import()`）経由で、`ssrLoadModule()` は ModuleRunner に置き換わった非推奨 API なので使わない。
 
-tsx は cwd の tsconfig を読むが、その `include` に入っていないファイルには `compilerOptions` を渡さない。デッキ（cwd）から `exports` 経由で読まれるここの `.tsx` は `include` の外なので、pragma が無いと classic 変換になり `React is not defined` で落ちる。pragma で指定しておけば、デッキ側の tsconfig を触らずに済む。
+```json
+"pdf": "deck-pdf src/pdf.tsx"
+```
 
-デッキ側（cwd のパッケージ）の `.tsx` は通常どおり JSX で書ける。
+`tsx` を使わないのは、tsx が tsconfig を **1 つだけ**読み、その `include` に入っているファイルにしか `jsx` を当てないため。デッキ（cwd）の tsconfig を読ませると `packages/deck/src/*.tsx` が **classic 変換**になり `React is not defined` で落ちる。Vite はプレビューと同じ変換器なので、`--tsconfig` のような回避策なしで両方の `.tsx` を扱える。
+
+`configFile: false` で起動している。デッキ側の `vite.config.ts` はプレビュー用（`root` を `preview/` に固定し Panda を挟む）で、PDF には要らない。
+
+`components/` の各コンポーネントが共有する色とフォントは `theme.ts` にある。
 
 ### 1ページ = 1スライド
 
@@ -86,7 +138,7 @@ tsx は cwd の tsconfig を読むが、その `include` に入っていない�
 takumi はシステムフォントを読まない。既定ではこのパッケージの `fonts/` に置いた LINE Seed JP（本文）と UDEV Gothic（コード）を読んで登録する。`LINESeedJP-Regular.ttf` が
 本文、`LINESeedJP-Bold.ttf` が見出しと `<b>`/`<strong>`。ビルドにネットワークは要らない。
 
-takumi の UA スタイルシートは `code` / `pre` に等幅を当てないので、`renderDeck` が `CODE_FONT_FAMILY` を `pre` / `code` / `kbd` / `samp` に当てる CSS を一緒に渡している。
+takumi の UA スタイルシートは `code` / `pre` に等幅を当てないので、`renderDeck` が `CODE_FONT_FAMILY` を `pre` / `code` / `kbd` / `samp` に当てる CSS を一緒に渡している。同じ CSS でリンク（`a`）を青（`SLIDE_THEME.link`）にして下線を引き、`text-underline-offset: 3px` で文字から離す。プレビュー側は `fonts.css` の `a:any-link` が同じ役目で、リセット（kiso.css）の `text-decoration-line: unset` を上書きする（色は CSS から `theme.ts` を読めないので直書き）。
 
 プレビュー（ブラウザ）は同じファイルを `@koralle/deck/fonts.css` から `@font-face` で読む。
 別のフォントにしたいときは `renderDeck` の `fonts` に渡す。

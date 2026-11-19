@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "description": "JSX slides rendered to PDF with takumi-pdf",
+  "bin": {
+    "deck-pdf": "./bin/pdf.mjs"
+  },
   "type": "module",
   "exports": {
     ".": "./src/index.tsx",
@@ -15,7 +18,9 @@
   "dependencies": {
     "@takumi-rs/helpers": "catalog:pdf",
     "react": "catalog:react",
-    "takumi-pdf": "catalog:pdf"
+    "shiki": "catalog:highlight",
+    "takumi-pdf": "catalog:pdf",
+    "vite": "catalog:tooling"
   },
   "devDependencies": {
     "@koralle/forge": "workspace:*",

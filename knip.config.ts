@@ -13,6 +13,9 @@ const config: KnipConfig = {
     // kiso.css は viewer.css の @import からしか参照しない。CSS の import は
     // knip の依存解決に乗らないので、未使用依存として挙がるのを避ける。
     "packages/preview": { ignoreDependencies: ["kiso.css"] },
+    // `"pdf": "deck-pdf src/pdf.tsx"` のエントリは knip が追えない（deck-pdf は
+    // 未知の bin）。PDF の入口として明示する。
+    "slides/react-tokyo-2026-11-20": { entry: ["src/pdf.tsx"] },
   },
   rules: {
     exports: "warn",

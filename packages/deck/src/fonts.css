@@ -39,3 +39,19 @@
 :where(pre, code, kbd, samp) {
   font-family: "UDEV Gothic", monospace;
 }
+
+/* 本文の <p>。PDF は `pdf.ts` が同じ指定を takumi に渡す。 */
+p {
+  font-size: 18px;
+}
+
+/*
+ * リンクは下線で分かるようにする。kiso.css（リセット）はスライド向けではないので、
+ * その `text-decoration-line: unset` より優先させる。PDF も同じ指定を takumi に渡す。
+ */
+a:any-link {
+  /* 色は `theme.ts` の `SLIDE_THEME.link` と同じ値（CSS からは読めないので直書き）。 */
+  color: #0969da;
+  text-decoration-line: underline;
+  text-underline-offset: 3px;
+}

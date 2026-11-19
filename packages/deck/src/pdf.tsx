@@ -6,13 +6,14 @@ import path from "node:path";
 import type { FontSubset } from "@takumi-rs/helpers";
 import type { ReactNode } from "react";
 import { render } from "takumi-pdf";
-import type { PdfMetadata } from "takumi-pdf";
+import type { ImagesInput, PdfMetadata, RenderOptions } from "takumi-pdf";
 
 import {
   CODE_FONT_FAMILY,
   DEFAULT_FONT_FACES,
   DEFAULT_FONT_FAMILY,
   SLIDE_SIZE,
+  SLIDE_THEME,
 } from "./index";
 import type { DeckMeta } from "./index";
 
@@ -32,6 +33,8 @@ export interface RenderDeckOptions {
   margin?: number;
   /** 既定の言語。 */
   lang?: string;
+  /** スライド内 `img` の `src` に対応する画像のバイト列。takumi は fetch しないので呼び出し側で読む。 */
+  images?: ImagesInput;
 }
 
 const FONT_DIR = path.join(import.meta.dirname, "..", "fonts");
@@ -40,10 +43,18 @@ const FONT_DIR = path.join(import.meta.dirname, "..", "fonts");
 const FULL_RANGE: [number, number][] = [[0, 0x10_ff_ff]];
 
 /**
- * takumi の UA スタイルシートは `code` / `pre` に等幅を当てないので、明示的に当てる。
- * プレビュー側は同じ指定が `fonts.css` にある。
+ * takumi の UA スタイルシートは `code` / `pre` に等幅を当てず、リンクにも下線を引かない。
+ * 明示的に当てる。プレビュー側は同じ指定が `fonts.css` にある。
  */
-const FONT_CSS = `pre, code, kbd, samp { font-family: ${CODE_FONT_FAMILY}; }`;
+const BASE_CSS = `
+pre, code, kbd, samp { font-family: ${CODE_FONT_FAMILY}; }
+p { font-size: 18px; }
+a {
+  color: ${SLIDE_THEME.link};
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+`;
 
 /**
  * 既定のフォントをリポジトリ同梱のファイルから読む。ビルドにネットワークは要らない。
@@ -74,6 +85,7 @@ export const renderDeck = async ({
   slides,
   size = SLIDE_SIZE,
   fonts,
+  images,
   margin = 0,
   lang = "ja",
 }: RenderDeckOptions): Promise<Uint8Array> => {
@@ -92,17 +104,23 @@ export const renderDeck = async ({
     metadata.creationDate = deck.date;
   }
 
+  const options: RenderOptions = {
+    size,
+    margin,
+    fonts: resolvedFonts,
+    css: BASE_CSS,
+    lang,
+    metadata,
+  };
+
+  if (images !== undefined) {
+    options.images = images;
+  }
+
   return await render(
     <main style={{ display: "block", fontFamily: DEFAULT_FONT_FAMILY }}>
       {slides}
     </main>,
-    {
-      size,
-      margin,
-      fonts: resolvedFonts,
-      css: FONT_CSS,
-      lang,
-      metadata,
-    }
+    options
   );
 };
