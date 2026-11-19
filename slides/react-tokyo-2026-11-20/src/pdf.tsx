@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { renderDeck } from "@koralle/deck/pdf";
@@ -8,7 +8,22 @@ import { slides } from "./slides";
 
 const out = "dist/react-tokyo-2026-11-20.pdf";
 
-const pdf = await renderDeck({ deck, slides });
+// takumi は画像を fetch しないので、`/mwg-hero.png` と `/koralle.png` のバイト列を渡す。
+// `src` はスライド側の img と同じ（Vite の root は preview/）。
+const pdf = await renderDeck({
+  deck,
+  slides,
+  images: [
+    {
+      src: "/mwg-hero.png",
+      data: async () => await readFile("preview/mwg-hero.png"),
+    },
+    {
+      src: "/koralle.png",
+      data: async () => await readFile("preview/koralle.png"),
+    },
+  ],
+});
 
 await mkdir(path.dirname(out), { recursive: true });
 
